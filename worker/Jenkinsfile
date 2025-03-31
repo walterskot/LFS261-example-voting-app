@@ -5,9 +5,9 @@ pipeline {
     }
     stages{
         stage('build_worker'){
-            when{
-                changeset "**/worker/**"
-            }
+            //when{
+            //    changeset "**/worker/**"
+            //}
             steps{
                 echo 'building worker app'
                 dir('worker'){
@@ -16,9 +16,9 @@ pipeline {
             }
         }
         stage('test_worker'){
-            when{
-                changeset "**/worker/**"
-            }
+            //when{
+            //    changeset "**/worker/**"
+            //}
             steps{
                 echo 'Running unit tests on worker app'
                 dir('worker'){
@@ -27,10 +27,10 @@ pipeline {
             }
         }
         stage('package_worker'){
-            when{
-                branch 'master'
-                changeset "**/worker/**"
-            }
+            //when{
+            //    branch 'master'
+            //    changeset "**/worker/**"
+            //}
             steps{
                 echo 'packaging worker app into a jarfile'
                 dir('worker'){
