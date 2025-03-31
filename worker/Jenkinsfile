@@ -8,7 +8,6 @@ pipeline {
             //when{
             //    changeset "**/worker/**"
             //}
-
             steps{
                 echo 'building worker app'
                 dir('worker'){
