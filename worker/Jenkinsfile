@@ -2,7 +2,7 @@ pipeline {
     agent any
     tools {
 		maven 'maven 3.9.9'
-		NodeJS 'NodeJS 22.4.0'
+		nodejs 'NodeJS 22.4.0'
 	}
     stages{
         stage('build_result'){
@@ -11,7 +11,7 @@ pipeline {
             }
             steps{
                 echo 'install result app'
-                dir('result'){
+                dir('worker'){
                     sh 'npm install'
                 }
             }
@@ -22,7 +22,7 @@ pipeline {
             }
             steps{
                 echo 'Running unit tests on result app'
-                dir('result'){
+                dir('worker'){
                     sh 'npm install test'
                 }
             }
@@ -63,9 +63,20 @@ pipeline {
             }
         }
     }
-    post{
-        always{
-            echo 'Building multibranch pipeline is completed.'
+    post {
+        success {
+            slackSend (
+                channel: '#testing',
+                color: 'good',
+                message: "✅ Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            )
+        }
+        failure {
+            slackSend (
+                channel: '#testing',
+                color: 'danger',
+                message: "❌ Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            )
+        }
     }
-  }
 }
