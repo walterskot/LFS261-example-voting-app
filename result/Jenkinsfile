@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+    tools {
+		nodejs 'NodeJS 22.4.0'
+	}
+    stages{
+        stage('build_result'){
+            when{
+                changeset "**/result/**"
+            }
+            steps{
+                echo 'install result app'
+                dir('result'){
+                    sh 'npm install'
+                }
+            }
+        }
+        stage('test_result'){
+            when{
+                changeset "**/result/**"
+            }
+            steps{
+                echo 'Running unit tests on result app'
+                dir('result'){
+                    sh 'npm install test'
+                }
+            }
+        }
+    }
+    post {
+        success {
+            slackSend (
+                channel: '#testing',
+                color: 'good',
+                message: "✅ Build SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            )
+        }
+        failure {
+            slackSend (
+                channel: '#testing',
+                color: 'danger',
+                message: "❌ Build FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)"
+            )
+        }
+    }
+}
