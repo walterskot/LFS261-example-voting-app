@@ -2,31 +2,8 @@ pipeline {
     agent any
     tools {
 		maven 'maven 3.9.9'
-		nodejs 'NodeJS 22.4.0'
 	}
     stages{
-        stage('build_result'){
-            when{
-                changeset "**/result/**"
-            }
-            steps{
-                echo 'install result app'
-                dir('result'){
-                    sh 'npm install'
-                }
-            }
-        }
-        stage('test_result'){
-            when{
-                changeset "**/result/**"
-            }
-            steps{
-                echo 'Running unit tests on result app'
-                dir('result'){
-                    sh 'npm install test'
-                }
-            }
-        }
         stage('build_worker'){
             when{
                 changeset "**/worker/**"
