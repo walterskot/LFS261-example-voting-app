@@ -4,7 +4,29 @@ pipeline {
 		maven 'maven 3.9.9'
 	}
     stages{
-        stage('build'){
+        stage('build_result'){
+            when{
+                changeset "**/result/**"
+            }
+            steps{
+                echo 'install result app'
+                dir('result'){
+                    sh 'mvn install'
+                }
+            }
+        }
+        stage('test_result'){
+            when{
+                changeset "**/result/**"
+            }
+            steps{
+                echo 'Running unit tests on result app'
+                dir('result'){
+                    sh 'mvn install test'
+                }
+            }
+        }
+        stage('build_worker'){
             when{
                 changeset "**/worker/**"
             }
@@ -15,7 +37,7 @@ pipeline {
                 }
             }
         }
-        stage('test'){
+        stage('test_worker'){
             when{
                 changeset "**/worker/**"
             }
@@ -26,7 +48,7 @@ pipeline {
                 }
             }
         }
-        stage('package'){
+        stage('package_worker'){
             when{
                 branch 'master'
                 changeset "**/worker/**"
@@ -42,8 +64,7 @@ pipeline {
     }
     post{
         always{
-            echo 'Building multibranch pipeline for worker is completed.'
-
+            echo 'Building multibranch pipeline is completed.'
     }
   }
 }
