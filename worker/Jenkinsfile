@@ -7,9 +7,15 @@ pipeline {
     }
     stages{
         stage('build_worker'){
-            //when{
-            //    changeset "**/worker/**"
-            //}
+            when{
+                changeset "**/worker/**"
+            }
+            agent{
+                docker{
+                    image 'maven:3.9.8-sapmachine-21'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             steps{
                 echo 'building worker app'
                 dir('worker'){
@@ -18,9 +24,15 @@ pipeline {
             }
         }
         stage('test_worker'){
-            //when{
-            //    changeset "**/worker/**"
-            //}
+            when{
+                changeset "**/worker/**"
+            }
+            agent{
+                docker{
+                    image 'maven:3.9.8-sapmachine-21'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             steps{
                 echo 'Running unit tests on worker app'
                 dir('worker'){
@@ -29,10 +41,16 @@ pipeline {
             }
         }
         stage('package_worker'){
-            //when{
-            //    branch 'master'
-            //    changeset "**/worker/**"
-            //}
+            when{
+                branch 'master'
+                changeset "**/worker/**"
+            }
+            agent{
+                docker{
+                    image 'maven:3.9.8-sapmachine-21'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             steps{
                 echo 'packaging worker app into a jarfile'
                 dir('worker'){
@@ -43,6 +61,10 @@ pipeline {
         }
         stage('docker_package'){
             agent any
+            when{
+                branch 'master'
+                changeset "**/worker/**"
+            }
             steps{
                 echo 'Packaging worker app with docker'
                 script{
@@ -50,6 +72,7 @@ pipeline {
                         def workerImage =
                         docker.build("walterskot/worker:v${env.BUILD_ID}", "./worker")
                             workerImage.push()
+                            workerImage.push("${env.BRANCH_NAME}")
                             workerImage.push("latest")
                     }
                 }
