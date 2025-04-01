@@ -3,6 +3,11 @@ pipeline {
     agent none
 
   stages {
+        stage('Cleanup') {
+            steps {
+                cleanWs(deleteDirs: true, notFailBuild: true)
+            }
+        }
 
         stage('worker-build') {
             agent {
