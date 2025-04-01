@@ -4,7 +4,7 @@ pipeline {
 		nodejs 'NodeJS 22.4.0'
 	}
     stages{
-        stage('build_result'){
+        stage('result_build'){
             when{
                 changeset "**/result/**"
             }
@@ -15,7 +15,7 @@ pipeline {
                 }
             }
         }
-        stage('test_result'){
+        stage('result_test'){
             when{
                 changeset "**/result/**"
             }

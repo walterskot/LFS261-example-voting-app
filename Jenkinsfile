@@ -1,7 +1,7 @@
 pipeline {
     agent none
     stages{
-        stage("worker_build"){
+        stage("build"){
             when{
                 changeset "**/worker/**"
             }
@@ -18,7 +18,7 @@ pipeline {
                 }
             }
         }
-        stage("worker_test"){
+        stage("test"){
             when{
                 changeset "**/worker/**"
             }
@@ -35,7 +35,7 @@ pipeline {
                 }
             }
         }
-        stage("worker_package"){
+        stage("package"){
             when{
                 branch 'master'
                 changeset "**/worker/**"
@@ -54,7 +54,7 @@ pipeline {
                 }
             }
         }
-        stage('worker_docker-package'){
+        stage('docker-package'){
             agent any
             when{
                 changeset "**/worker/**"
