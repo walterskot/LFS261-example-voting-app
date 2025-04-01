@@ -24,6 +24,7 @@ pipeline {
       }
     }
 
+
     stage('worker test') {
             agent {
                 docker {
@@ -75,8 +76,8 @@ pipeline {
       steps {
                 echo 'Packaging worker app with docker'
         script {
-            docker.withRegistry('https://index.docker.io/v1/', 'Docker_Hub') {
-                def workerImage = docker.build("walterskot/worker:v${env.BUILD_ID}", './worker')
+                    docker.withRegistry('https://index.docker.io/v1/', 'Docker_Hub') {
+                        def workerImage = docker.build("walterskot/worker:v${env.BUILD_ID}", './worker')
             workerImage.push()
             workerImage.push("${env.BRANCH_NAME}")
             workerImage.push('latest')
@@ -134,8 +135,8 @@ pipeline {
       steps {
                 echo 'Packaging result app with docker'
         script {
-            docker.withRegistry('https://index.docker.io/v1/', 'Docker_Hub') {
-                def resultImage = docker.build("walterskot/result:v${env.BUILD_ID}", './result')
+                    docker.withRegistry('https://index.docker.io/v1/', 'Docker_Hub') {
+                        def resultImage = docker.build("walterskot/result:v${env.BUILD_ID}", './result')
             resultImage.push()
             resultImage.push("${env.BRANCH_NAME}")
             resultImage.push('latest')
@@ -147,7 +148,7 @@ pipeline {
     stage('vote-build') {
             agent {
                 docker {
-                    image 'python:3.9-slim'
+                    image 'python:2.7.16-slim'
           args '--user root'
         }
 
@@ -167,7 +168,7 @@ pipeline {
     stage('vote-test') {
             agent {
                 docker {
-                    image 'python:3.9-slim'
+                    image 'python:2.7.16-slim'
           args '--user root'
         }
 
@@ -205,12 +206,11 @@ pipeline {
       steps {
                 echo 'Packaging vote app with docker'
         script {
-            docker.withRegistry('https://index.docker.io/v1/', 'Docker_Hub') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'Docker_Hub') {
                         // ./vote is the path to the Dockerfile that Jenkins will find from the Github repo
-                def voteImage = docker.build("walterskot/vote:v${env.BUILD_ID}", "./vote")
-                def safeBranch = env.BRANCH_NAME.replaceAll('/', '-')
+            def voteImage = docker.build("walterskot/vote:${env.GIT_COMMIT}", "./vote")
             voteImage.push()
-            voteImage.push(safeBranch)
+            voteImage.push("${env.BRANCH_NAME}")
             voteImage.push("latest")
           }
         }
