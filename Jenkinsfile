@@ -8,7 +8,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.9.8-sapmachine-21'
-          args '-v $HOME/.m2:/root/.m2'
+                    args '-v $HOME/.m2:/root/.m2'
         }
 
       }
