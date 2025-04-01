@@ -2,41 +2,13 @@ pipeline {
 
     agent none
 
-    environment {
-        PYTHONDONTWRITEBYTECODE = '1' // забороняємо створення .pyc
-    }
-
-    options {
-        skipDefaultCheckout() // самі вручну зробимо checkout після очищення
-    }
-
-
-
   stages {
-
-        stage('Clean workspace') {
-            steps {
-                script {
-                    try {
-                        cleanWs(deleteDirs: true, notFailBuild: true)
-                    } catch (err) {
-                        echo "⚠️ Clean workspace failed, continuing anyway. Error: ${err}"
-                    }
-                }
-            }
-        }
-
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('worker-build') {
             agent {
                 docker {
                     image 'maven:3.9.8-sapmachine-21'
-                    args '-v $HOME/.m2:/root/.m2'
+          args '-v $HOME/.m2:/root/.m2'
         }
 
       }
@@ -175,7 +147,8 @@ pipeline {
     stage('vote-build') {
             agent {
                 docker {
-                    image 'python:3.9-slim'
+                    image 'python:2.7.16-slim'
+          args '--user root'
         }
 
       }
@@ -194,7 +167,8 @@ pipeline {
     stage('vote-test') {
             agent {
                 docker {
-                    image 'python:3.9-slim'
+                    image 'python:2.7.16-slim'
+          args '--user root'
         }
 
       }
@@ -251,7 +225,7 @@ pipeline {
       }
       steps {
                 echo 'Deploy instavote app with docker compose'
-        sh 'docker -compose up -d'
+        sh 'docker-compose up -d'
       }
     }
 
