@@ -2,7 +2,35 @@ pipeline {
 
     agent none
 
+    environment {
+        PYTHONDONTWRITEBYTECODE = '1' // забороняємо створення .pyc
+    }
+
+    options {
+        skipDefaultCheckout() // самі вручну зробимо checkout після очищення
+    }
+
+
+
   stages {
+
+        stage('Clean workspace') {
+            steps {
+                script {
+                    try {
+                        cleanWs(deleteDirs: true, notFailBuild: true)
+                    } catch (err) {
+                        echo "⚠️ Clean workspace failed, continuing anyway. Error: ${err}"
+                    }
+                }
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
 
         stage('worker-build') {
             agent {
