@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
 
     stages {
 
@@ -15,6 +15,8 @@ pipeline {
             }
 
             steps {
+                checkout scm
+                echo 'Building...'
                 echo 'Compiling worker app..'
                 dir(path: 'worker') {
                     sh 'mvn compile'
