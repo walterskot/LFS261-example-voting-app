@@ -13,7 +13,6 @@ pipeline {
             when {
                 changeset '**/worker/**'
             }
-
             steps {
                 checkout scm
                 echo 'Building...'
